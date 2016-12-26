@@ -1,0 +1,8 @@
+"/" :              "main#index"
+"/run" :           "main#run"
+"/hint":           "main#hint"
+"/check":          "main#check"
+"/achievements":   "main#achievements"
+"/won":            "main#you_won"
+"/new_game":       "main#new_game"
+"/quit":           "main#quit"

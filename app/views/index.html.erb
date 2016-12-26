@@ -1,0 +1,36 @@
+<div class='container'>
+  <h1 class='text-center'>Codebreaker</h1>
+
+  <div calss='row'>
+    <div class='col-md-4'>
+      <p class='text-center process'>Attempts : <%= @session['game'].attempts %></p>
+    </div>
+    <div class='col-md-4'>
+      <p class='text-center process'><a href='/hint' class='button btn-primary btn-lg'>HINT</a> : <%= @session['game'].hint || '' %></p>
+    </div>
+    <div class='col-md-4'>
+      <p class='text-center process'>Hints : <%= @session['game'].hints %></p>
+    </div>
+  </div>
+
+  <div class='row'>
+    <div class='col-md-12 text-center'>
+      <form action='/check' method='POST' class='form-inline'>
+        <div class="input-group">
+          <input type='text' name='guess' class='form-control input-lg' placeholder='number'/>
+          <div class='input-group-btn'>
+            <input type='submit' class='btn btn-primary btn-lg' value='GO'/>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class='row'>
+    <div class='col-md-12'>
+      <p class='text-center process'><%= @session['game'].response == [] ? '' : @session['game'].response %></p>
+    </div>
+  </div>
+  <p>Code : <%= @session['game'].secret_code %></p>
+
+</div>
