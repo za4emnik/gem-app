@@ -6,6 +6,7 @@ class MainController < Controller
     @session = env['rack.session']
     @request = Rack::Request.new(env)
     @irb = RenderIRB.new(self)
+    @session['errors'] = Array.new unless @session['errors'].kind_of?(Array)
     unless @session['game']
       @session['game'] = CodebreakerGem::Game.new
       @session['game'].generate_code
@@ -29,8 +30,12 @@ class MainController < Controller
 
   def check
     return you_won if @session['game'].secret_code == @request.params['guess']
-    @session['game'].guess = @request.params['guess']
-    @session['game'].check
+    if @request.params['guess'] =~ /\A[1-6]{4}\z/
+      @session['game'].guess = @request.params['guess']
+      @session['game'].check
+    else
+      set_error 'Guess may include only the digits 1 to 6'
+    end
     redirect_to('/run')
   end
 
@@ -61,9 +66,10 @@ class MainController < Controller
   end
 
   def save_name
-    if @request.post? && @request.params['player_name']
+    unless @request.params['player_name'].empty?
       @session['player'] = @request.params['player_name']
     else
+      set_error 'Name can\'t be empty!'
       redirect_to ('/')
     end
   end
@@ -71,6 +77,14 @@ class MainController < Controller
   def achievements
     @achievements = CodebreakerGem::Game.new.read_achievements
     @irb.render 'achievements'
+  end
+
+  def set_error(error)
+    @session['errors'].push(error)
+  end
+
+  def remove_errors
+    @session['errors'] = nil
   end
 
   after_filter 'redirect_to_run', 'hint', 'quit', 'new_game'

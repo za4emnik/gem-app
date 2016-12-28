@@ -13,6 +13,7 @@ class Router < Controller
       klass = klass.new(@env)
       result = klass.send(:"#{action_name}")
       self.body = klass.response || result
+      klass.remove_errors unless self.body.kind_of?(Rack::Response)
       status_ok
     else
       not_found

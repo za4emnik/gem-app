@@ -13,6 +13,10 @@ require 'spec_helper'
       end
     end
 
+    it '@session[errors] should be instance of Array class' do
+      expect(subject.instance_variable_get(:@session)['errors']).to be_kind_of(Array)
+    end
+
     it '@session[game] should be instance of CodebreakerGem::Game class' do
       expect(subject.instance_variable_get(:@session)['game']).to be_kind_of(CodebreakerGem::Game)
     end
@@ -108,9 +112,14 @@ require 'spec_helper'
       expect(subject.instance_variable_get(:@session)['player']).to eq('Mike')
     end
 
-    it 'should redirect to \'/\'' do
-      allow(subject.instance_variable_get(:@request)).to receive(:post?).and_return false
-      subject.instance_variable_get(:@request).instance_variable_set(:@params, {'player_name' => nil})
+    it 'should call #set_error if name empty' do
+      subject.instance_variable_get(:@request).instance_variable_set(:@params, {'player_name' => ''})
+      expect(subject).to receive(:set_error).with('Name can\'t be empty!')
+      subject.save_name
+    end
+
+    it 'should redirect to \'/\' if name empty' do
+      subject.instance_variable_get(:@request).instance_variable_set(:@params, {'player_name' => ''})
       expect(subject).to receive(:redirect_to).with('/')
       subject.save_name
     end
@@ -123,6 +132,29 @@ require 'spec_helper'
     it '@achievements should be array' do
       subject.achievements
       expect(subject.instance_variable_get(:@achievements)).to be_kind_of(Array)
+    end
+  end
+
+  context '#set_error' do
+    let(:env) { env = { 'rack.session' => {'game' => nil}} }
+    subject { MainController.new(env) }
+
+    it '@session[errors] should contain 2 elements' do
+      subject.set_error('one')
+      subject.set_error('two')
+      expect(subject.instance_variable_get(:@session)['errors']).to eq(['one', 'two'])
+    end
+  end
+
+  context '#remove_errors' do
+    let(:env) { env = { 'rack.session' => {'game' => nil}} }
+    subject { MainController.new(env) }
+
+    it '@session[errors] should be nil' do
+      subject.set_error('one')
+      subject.set_error('two')
+      subject.remove_errors
+      expect(subject.instance_variable_get(:@session)['erros']).to eq(nil)
     end
   end
 end

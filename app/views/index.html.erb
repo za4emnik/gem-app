@@ -12,8 +12,16 @@
       <p class='text-center process'>Hints : <%= @session['game'].hints %></p>
     </div>
   </div>
-
   <div class='row'>
+    <% unless @session['errors'].empty? %>
+      <div class="alert alert-error">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <strong>Warning!</strong>
+        <% @session['errors'].each do |error| %>
+          <%= error %>
+        <% end %>
+      </div>
+    <% end %>
     <div class='col-md-12 text-center'>
       <form action='/check' method='POST' class='form-inline'>
         <div class="input-group">
@@ -31,6 +39,5 @@
       <p class='text-center process'><%= @session['game'].response == [] ? '' : @session['game'].response %></p>
     </div>
   </div>
-  <!--<p>Code : <%= @session['game'].secret_code %></p>-->
 
 </div>
