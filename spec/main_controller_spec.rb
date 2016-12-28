@@ -56,7 +56,7 @@ require 'spec_helper'
     let(:env) { env = { 'rack.session' => {'game' => nil}} }
     subject { MainController.new(env) }
 
-    it 'hould return #you_won if codes coincide' do
+    it 'should return #you_won if codes coincide' do
       subject.instance_variable_get(:@session)['game'].instance_variable_set(:@secret_code, '1234')
       subject.instance_variable_get(:@request).instance_variable_set(:@params, {'guess' => '1234'})
       expect(subject).to receive(:you_won)

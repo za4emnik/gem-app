@@ -25,7 +25,7 @@ class MainController < Controller
   end
 
   def hint
-    @session['game'].get_hint
+    @session['game'].get_hint if @session['game'].hints > 0
   end
 
   def check
